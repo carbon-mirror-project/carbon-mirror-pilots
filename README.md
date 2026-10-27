@@ -50,3 +50,14 @@ This is functional and plausible, not artificial delay code. A second-stage re-r
 - `ru_maxrss` units vary by platform, so do not use it as a cross-platform metric without normalization.
 - Choose an experimental measurement method and decide how intermediate audit files factor into the output contract **before** optimization.
 - No methods should be declared superior based only on technical speedup.
+
+
+## Baseline measurement toolkit
+
+- `measure.py` runs repeat measurements in clean output directories, captures process wall time and output size, checks byte-level determinism, and writes a code/input provenance manifest.
+- `test_pilot.py` checks repeatability, SQLite correctness and measurement output.
+- `protocol/measurement-and-freeze.md` documents the formal freeze gate. **The baseline has not been frozen.**
+- `protocol/registration-template.md` is an uncompleted preregistration form.
+- `assessments/` contains draft conventional and Four Mirrors reviewer worksheets to freeze before any formal comparison.
+
+No energy/emissions measurement, efficiency optimization, certification or evidence of Carbon Mirror superiority is implied by this tooling. The Linux-only baseline uses Unix `resource`; formal hardware settings, instrumentation and independent assessment remain open.

@@ -1,0 +1,16 @@
+name: Pilot 001 functional checks
+on:
+  push:
+    branches: ['pilot-001/**']
+  pull_request:
+    branches: [main]
+jobs:
+  functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test correctness and measurement harness
+        run: python -m unittest -v test_pilot.py
