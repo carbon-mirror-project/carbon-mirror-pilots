@@ -1,0 +1,43 @@
+name: Pilot 001 scale readiness check
+on:
+  push:
+    branches: ['pilot-001/**']
+    paths:
+      - 'verify.py'
+      - '.github/workflows/pilot-001-scale.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  scale:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Record environment
+        run: |
+          mkdir -p results/scale-readiness
+          uname -a > results/scale-readiness/host.txt
+          lscpu >> results/scale-readiness/host.txt
+          free -h >> results/scale-readiness/host.txt
+          df -h . >> results/scale-readiness/host.txt
+      - name: Generate one-million-row synthetic dataset
+        run: python generate.py --rows 1000000 --seed 1847 --out results/scale-readiness/data
+      - name: Run unchanged baseline
+        run: python baseline.py --input results/scale-readiness/data/input.csv --out results/scale-readiness/baseline
+      - name: Verify using disk-backed streaming oracle
+        run: python verify.py --input results/scale-readiness/data/input.csv --out results/scale-readiness/baseline
+      - name: Preserve readiness metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-001-scale-readiness-${{ github.run_id }}
+          path: |
+            results/scale-readiness/host.txt
+            results/scale-readiness/data/manifest.json
+            results/scale-readiness/baseline/run.json
+          retention-days: 30
+          if-no-files-found: warn
