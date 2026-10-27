@@ -1,0 +1,53 @@
+name: Pilot 001 exploratory benchmark
+on:
+  push:
+    branches: ['pilot-001/**']
+    paths:
+      - '.github/workflows/pilot-001-benchmark.yml'
+      - 'baseline.py'
+      - 'generate.py'
+      - 'verify.py'
+      - 'measure.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  exploratory:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      PYTHONHASHSEED: '0'
+      TZ: UTC
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Record runner environment
+        run: |
+          mkdir -p results/hosted-exploratory
+          {
+            echo "commit=${GITHUB_SHA}"
+            echo "run_id=${GITHUB_RUN_ID}"
+            echo "runner_image=${ImageOS:-unknown} ${ImageVersion:-unknown}"
+            uname -a
+            lscpu
+            free -h
+            df -h .
+            python --version
+          } > results/hosted-exploratory/host.txt
+      - name: Generate reproducible synthetic data
+        run: python generate.py --rows 100000 --seed 1847 --out results/hosted-exploratory/data
+      - name: Exploratory measurements with correctness oracle
+        run: python measure.py --input results/hosted-exploratory/data/input.csv --out results/hosted-exploratory/measurements --warmups 2 --runs 5 --verify
+      - name: Upload reproducibility artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pilot-001-exploratory-${{ github.run_id }}
+          path: |
+            results/hosted-exploratory/host.txt
+            results/hosted-exploratory/data/manifest.json
+            results/hosted-exploratory/measurements/
+          retention-days: 30
+          if-no-files-found: warn
