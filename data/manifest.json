@@ -1,0 +1,12 @@
+{
+  "generator": "generate.py",
+  "schema_version": "1.0",
+  "seed": 1847,
+  "rows": 10000,
+  "input_sha256": "d9a44a18c3a101ddf6e06769fbe88e60078c33cfc01cc834a9259ce7af313a92",
+  "intentional_duplicate_rows": 434,
+  "intentional_invalid_original_rows": 173,
+  "data_policy": "fictional/synthetic; no personal data",
+  "duplicate_policy": "first valid occurrence of a record_id wins; subsequent occurrences rejected",
+  "validity_policy": "valid location L01-L10, ISO date, category allowlist, positive integer amount_cents and units"
+}

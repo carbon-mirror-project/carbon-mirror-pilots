@@ -1,0 +1,9 @@
+{
+  "accepted": 9393,
+  "rejected": 607,
+  "groups": 50,
+  "elapsed_sec": 0.150285,
+  "peak_rss_platform_units": 97296,
+  "validated_sha256": "31fb0ce4313190bde030b12fbf97191a1e7aa6de4a2c534dc43a44f8a2074b21",
+  "summary_sha256": "ef7b033e56d8593d6a59e36fa64517d6c30566199870697c8c6e971fd9d74691"
+}
